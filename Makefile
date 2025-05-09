@@ -1,10 +1,10 @@
 CC=gcc
 EXEC=part1 cpubound iobound
-FLAGS=-g -o
+FLAGS=-g -Wall -o
 
-all: part1 cpubound iobound
+all: $(EXEC)
 
-part1: part1.o 
+part1: part1.o string_parser.o
 	$(CC) $(FLAGS) $@ $^
 
 cpubound: cpubound.o 

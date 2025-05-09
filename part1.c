@@ -1,8 +1,10 @@
 #include<stdio.h>
-#include <sys/types.h>
+#include<sys/types.h>
 #include<stdlib.h>
 #include<unistd.h>
 #include<sys/wait.h>
+
+#include "string_parser.h"
 
 void script_print (pid_t* pid_ary, int size);
 
@@ -52,7 +54,7 @@ int main(int argc,char*argv[])
 
 	script_print(pid_ary, size);
 
-    for(int p = 0; p < size, p++){
+    for(int p = 0; p < size; p++){
         waitpid(pid_ary[p], NULL, 0);
     }
 
