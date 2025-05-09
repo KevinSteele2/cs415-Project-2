@@ -14,38 +14,52 @@ int main(int argc,char*argv[])
 		exit (0);
 	}
 
-	/*
-	*	TODO
-	*	#1	declare child process pool
-	*	#2 	spawn n new processes
-	*		first create the argument needed for the processes
-	*		for example "./iobound -seconds 10"
-	*	#3	call script_print
-	*	#4	wait for children processes to finish
-	*	#5	free any dynamic memory
-	*/
+    char *line = NULL;
+    size_t len = 0;
+    FILE *file = fopen(argv[1], "r");
+    if(!file){
+        fprintf(stdout, "Error with input file\n");
+        return EXIT_FAILURE;
+    }
 
-	int size = atoi(argv[1]);
+    int size = 0;
+    while (getline(&line, &len, file) != -1){
+        size++;
+    }
+    rewind(file);
 
-	pid_t *pid_ary = (pid_t *)malloc(sizeof(pid_t) * size);
+    pid_t *pid_ary = (pid_t *)malloc(sizeof(pid_t) * size);
 
-	char *args[] = {"./iobound", "-seconds", "10", 0};
+    int i = 0;
+    while(getline(&line, &len, file) != -1){
+        command_line cmd = str_filler(line, " ");
+        pid_ary[i] = fork();
 
-	for (int i = 0; i< size; ++i){
-		pid_ary[i] = fork();
-
-		if(pid_ary[i] < 0){
-			fprintf(stderr, "fork failed\n");
-			exit(-1);
-		}
-		else if(pid_ary[i] == 0){
-			execvp("./iobound", args);
-			exit(0);
-		}
-	}
+        if(pid_ary[i] < 0){
+            fprintf(stderr, "fork failed\n");
+            free_command_line(&cmd);
+            free(pid_ary);
+            fclose(file);
+            exit(-1);
+        }
+        else if(pid_ary[i] == 0){
+            execvp(cmd.command_list[0], cmd.command_list);
+            exit(0);
+        }
+        free_command_line(&cmd);
+        i++;
+    }      
 
 	script_print(pid_ary, size);
+
+    for(int p = 0; p < size, p++){
+        waitpid(pid_ary[p], NULL, 0);
+    }
+
 	free(pid_ary);
+    free(line);
+    fclose(file);
+    return 0;
 }
 
 
