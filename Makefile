@@ -1,3 +1,4 @@
+CC=gcc
 EXEC=part1 cpubound iobound
 FLAGS=-g -o
 
