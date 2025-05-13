@@ -4,7 +4,7 @@ FLAGS=-g -Wall -o
 
 all: $(EXEC)
 
-part1: part2.o string_parser.o
+part2: part2.o string_parser.o
 	$(CC) $(FLAGS) $@ $^
 
 cpubound: cpubound.o 
