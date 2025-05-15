@@ -11,6 +11,39 @@ int *isrunning;
 pid_t *pid_array;
 int size;
 
+void get_proc(pid_t pid) {
+    // reading from stat
+    char path[256];
+    sprintf(path, "/proc/%d/stat", pid);
+    FILE *file = fopen(path, "r");
+    if (!file) {
+        perror("Error opening /proc stat");
+        return;
+    }
+
+    char buffer[1024];
+    if (fgets(buffer, sizeof(buffer), file)) {
+        long utime, stime;
+        sscanf(buffer, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %ld %ld", &utime, &stime);
+        printf("PID %d\n User time: %ld\n System time: %ld\n", pid, utime, stime);
+    }
+    fclose(file);
+
+    //reading from statm
+    sprintf(path, "/proc/%d/statm", pid);
+    file = fopen(path, "r");
+    if(!file){
+        perror("Error /proc statm");
+        return;
+    }
+    long vmsize, rss;
+    if(fscanf(file, "%ld %ld", &vmsize, &rss) == 2){
+        printf("Virtual Memory Size: %ld pages\n", vmsize);
+        printf("Resident Set Size: %ld pages\n", rss);
+    }
+    fclose(file);
+}
+
 void alarm_handling(int sig){
     if(isrunning[process]){
         kill(pid_array[process], SIGSTOP);
@@ -19,8 +52,16 @@ void alarm_handling(int sig){
     while(!isrunning[process]){
         process = (process+1) % size;
     }
+
     kill(pid_array[process], SIGCONT);
     printf("SIGCONT sending to %d\n", pid_array[process]);
+
+    printf("Data from proc:\n")
+    for(int j = 0; j < size; j++){
+        if(isrunning[j]){
+            get_proc(pid_array[i]);
+        }
+    }
     alarm(1);
 }
 
@@ -107,6 +148,7 @@ int main(int argc,char*argv[])
 
 	free(pid_array);
     free(line);
+    free(isrunning);
     fclose(file);
     return 0;
 }
