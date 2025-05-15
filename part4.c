@@ -24,7 +24,7 @@ void get_proc(pid_t pid) {
     char buffer[1024];
     if (fgets(buffer, sizeof(buffer), file)) {
         long utime, stime;
-        sscanf(buffer, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %ld %ld", &utime, &stime);
+        sscanf(buffer, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %ld %ld", &utime, &stime); //ignores everything but user time and system time
         printf("PID %d\n User time: %ld\n System time: %ld\n", pid, utime, stime);
     }
     fclose(file);
@@ -33,13 +33,12 @@ void get_proc(pid_t pid) {
     sprintf(path, "/proc/%d/statm", pid);
     file = fopen(path, "r");
     if(!file){
-        perror("Error /proc statm");
+        perror("Error opening /proc statm");
         return;
     }
     long vmsize, rss;
-    if(fscanf(file, "%ld %ld", &vmsize, &rss) == 2){
-        printf("Virtual Memory Size: %ld pages\n", vmsize);
-        printf("Resident Set Size: %ld pages\n", rss);
+    if(fscanf(file, "%ld %ld", &vmsize, &rssize) == 2){
+        printf("Virtual Memory Size: %ld pages\n Resident Set Size %ld pages\n", vmsize, rssize);
     }
     fclose(file);
 }
