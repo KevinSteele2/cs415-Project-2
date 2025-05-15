@@ -54,8 +54,8 @@ int main(int argc,char*argv[])
 
 	script_print(pid_ary, size);
 
-    for(int p = 0; p < size; p++){
-        waitpid(pid_ary[p], NULL, 0);
+    for(int j = 0; j < size; j++){
+        waitpid(pid_ary[j], NULL, 0);
     }
 
 	free(pid_ary);
