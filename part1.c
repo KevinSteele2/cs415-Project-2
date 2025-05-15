@@ -52,8 +52,6 @@ int main(int argc,char*argv[])
         i++;
     }      
 
-	script_print(pid_ary, size);
-
     for(int j = 0; j < size; j++){
         waitpid(pid_ary[j], NULL, 0);
     }
@@ -63,34 +61,3 @@ int main(int argc,char*argv[])
     fclose(file);
     return 0;
 }
-
-
-void script_print (pid_t* pid_ary, int size)
-{
-	FILE* fout;
-	fout = fopen ("top_script.sh", "w");
-	fprintf(fout, "#!/bin/bash\ntop");
-	for (int i = 0; i < size; i++)
-	{
-		fprintf(fout, " -p %d", (int)(pid_ary[i]));
-	}
-	fprintf(fout, "\n");
-	fclose (fout);
-
-	char* top_arg[] = {"gnome-terminal", "--", "bash", "top_script.sh", NULL};
-	pid_t top_pid;
-
-	top_pid = fork();
-	{
-		if (top_pid == 0)
-		{
-			if(execvp(top_arg[0], top_arg) == -1)
-			{
-				perror ("top command: ");
-			}
-			exit(0);
-		}
-	}
-}
-
-
