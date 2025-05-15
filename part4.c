@@ -56,7 +56,7 @@ void alarm_handling(int sig){
     kill(pid_array[process], SIGCONT);
     printf("SIGCONT sending to %d\n", pid_array[process]);
 
-    printf("Data from proc:\n")
+    printf("Data from proc:\n");
     for(int j = 0; j < size; j++){
         if(isrunning[j]){
             get_proc(pid_array[i]);
