@@ -36,7 +36,7 @@ void get_proc(pid_t pid) {
         perror("Error opening /proc statm");
         return;
     }
-    long vmsize, rss;
+    long vmsize, rssize;
     if(fscanf(file, "%ld %ld", &vmsize, &rssize) == 2){
         printf("Virtual Memory Size: %ld pages\n Resident Set Size %ld pages\n", vmsize, rssize);
     }

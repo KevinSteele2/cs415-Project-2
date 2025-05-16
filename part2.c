@@ -6,8 +6,6 @@
 
 #include "string_parser.h"
 
-void script_print (pid_t* pid_array, int size);
-
 int main(int argc,char*argv[])
 {
 	if (argc != 2)
